@@ -1,6 +1,7 @@
 #include <mysql.h>
 #include <stdio.h>
 #include <stdlib.h>
+#pragma warning(disable: 4996)
 
 int main()
 {
@@ -12,7 +13,7 @@ int main()
 	// step 1. Initialize the MySQL Object
 	MYSQL* databaseObject = mysql_init(NULL);
 
-	if (databaseObject == NULL) 
+	if (databaseObject == NULL)
 	{
 		printf("Error Initializing the Database Object\n");
 		return EXIT_FAILURE;
@@ -28,7 +29,6 @@ int main()
 	int customer_id = 0;
 	int inventory_id = 0;
 	int staff_id = 0;
-
 
 
 }

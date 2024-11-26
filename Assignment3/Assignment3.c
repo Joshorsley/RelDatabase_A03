@@ -25,5 +25,10 @@ int main()
 		return EXIT_FAILURE;
 	}
 
+	int customer_id = 0;
+	int inventory_id = 0;
+	int staff_id = 0;
+
+
 
 }

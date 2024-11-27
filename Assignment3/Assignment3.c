@@ -53,7 +53,7 @@ int main()
 	}
 
 	char query[256];
-	sprintf(query,
+	printf(query,
 		"SELECT COUNT(*) AS available_count FROM inventory i LEFT JOIN rental r ON i.inventory_id = r.inventory_id AND r.return_date IS NULL WHERE i.inventory_id = %d AND r.rental_id IS NULL",
 		inventory_id);
 
@@ -76,5 +76,27 @@ int main()
 
 	printf("%d are available for rent\n", available_count);
 	mysql_free_result(result);
-	
+
+	if (available_count > 0)
+	{
+		sprintf(query,
+			"INSERT INTO rental (rental_date, inventory_id, customer_id, staff_id, return_date) "
+			"VALUES (NOW(), %d, %d, %d, NULL);",
+			inventory_id, customer_id, staff_id);
+
+		if (mysql_query(databaseObject, query) != 0)
+		{
+			printf("Error inserting rental");
+			mysql_close(databaseObject);
+			return EXIT_FAILURE;
+		}
+
+		printf("Rental record added successfully.\n");
+
+	}
+	else
+	{
+		char choice = NULL;
+		printf("Rental not available. Add customer to waitlist? (y/n)");
+	}
 }

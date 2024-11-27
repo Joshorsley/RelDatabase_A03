@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #pragma warning(disable: 4996)
 
-
+void addNewRental(MYSQL* databaseObject);
 
 
 int main()
@@ -29,6 +29,14 @@ int main()
 		return EXIT_FAILURE;
 	}
 
+	addNewRental(databaseObject);
+
+	mysql_close(databaseObject);
+	return EXIT_SUCCESS;
+}
+
+void addNewRental(MYSQL* databaseObject)
+{
 	int customer_id = 0;
 	int inventory_id = 0;
 	int staff_id = 0;
@@ -37,19 +45,19 @@ int main()
 	if (scanf("%d", &customer_id) != 1)
 	{
 		printf("Invalid input for Customer ID.  Please enter a valid number.\n");
-		return EXIT_FAILURE;
+		return;
 	}
 	printf("Enter Inventory ID: ");
 	if (scanf("%d", &inventory_id) != 1)
 	{
 		printf("Invalid input for Inventory ID.  Please enter a valid number.\n");
-		return EXIT_FAILURE;
+		return;
 	}
 	printf("Enter Staff ID: ");
 	if (scanf("%d", &staff_id) != 1)
 	{
 		printf("Invalid input for Staff ID.  Please enter a valid number.\n");
-		return EXIT_FAILURE;
+		return;
 	}
 
 	char query[256];
@@ -60,15 +68,13 @@ int main()
 	if (mysql_query(databaseObject, query) != 0)
 	{
 		printf("Error Executing the Query\n");
-		mysql_close(databaseObject);
-		return EXIT_FAILURE;
+		return;
 	}
 	MYSQL_RES* result = mysql_store_result(databaseObject);
 	if (result == NULL)
 	{
 		printf("Error Storing Result: %s\n", mysql_error(databaseObject));
-		mysql_close(databaseObject);
-		return EXIT_FAILURE;
+		return;
 	}
 
 	MYSQL_ROW row = mysql_fetch_row(result);
@@ -87,8 +93,7 @@ int main()
 		if (mysql_query(databaseObject, query) != 0)
 		{
 			printf("Error inserting rental");
-			mysql_close(databaseObject);
-			return EXIT_FAILURE;
+			return;
 		}
 
 		printf("Rental record added successfully.\n");

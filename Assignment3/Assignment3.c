@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #pragma warning(disable: 4996)
 
+
+
+
 int main()
 {
 	const char* server = "localhost";
@@ -30,5 +33,48 @@ int main()
 	int inventory_id = 0;
 	int staff_id = 0;
 
+	printf("Enter Customer ID: ");
+	if (scanf("%d", &customer_id) != 1)
+	{
+		printf("Invalid input for Customer ID.  Please enter a valid number.\n");
+		return EXIT_FAILURE;
+	}
+	printf("Enter Inventory ID: ");
+	if (scanf("%d", &inventory_id) != 1)
+	{
+		printf("Invalid input for Inventory ID.  Please enter a valid number.\n");
+		return EXIT_FAILURE;
+	}
+	printf("Enter Staff ID: ");
+	if (scanf("%d", &staff_id) != 1)
+	{
+		printf("Invalid input for Staff ID.  Please enter a valid number.\n");
+		return EXIT_FAILURE;
+	}
 
+	char query[256];
+	sprintf(query,
+		"SELECT COUNT(*) AS available_count FROM inventory i LEFT JOIN rental r ON i.inventory_id = r.inventory_id AND r.return_date IS NULL WHERE i.inventory_id = %d AND r.rental_id IS NULL",
+		inventory_id);
+
+	if (mysql_query(databaseObject, query) != 0)
+	{
+		printf("Error Executing the Query\n");
+		mysql_close(databaseObject);
+		return EXIT_FAILURE;
+	}
+	MYSQL_RES* result = mysql_store_result(databaseObject);
+	if (result == NULL)
+	{
+		printf("Error Storing Result: %s\n", mysql_error(databaseObject));
+		mysql_close(databaseObject);
+		return EXIT_FAILURE;
+	}
+
+	MYSQL_ROW row = mysql_fetch_row(result);
+	int available_count = atoi(row[0]);
+
+	printf("%d are available for rent\n", available_count);
+	mysql_free_result(result);
+	
 }

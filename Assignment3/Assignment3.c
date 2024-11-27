@@ -1,6 +1,5 @@
 #include <mysql.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "Utils.c"
 #pragma warning(disable: 4996)
 
 

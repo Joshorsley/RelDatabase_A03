@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#pragma warning(disable: 4996)
 
 #define SIZE_DATE_STRING 11
 #define SIZE_BUFFER 500

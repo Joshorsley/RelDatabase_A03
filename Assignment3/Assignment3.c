@@ -1,6 +1,6 @@
 #include <mysql.h>
 #include "Utils.c"
-#pragma warning(disable: 4996)
+
 
 void addNewRental(MYSQL* databaseObject);
 

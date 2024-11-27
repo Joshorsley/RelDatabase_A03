@@ -1,16 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#pragma warning(disable: 4996)
-
-#define SIZE_DATE_STRING 11
-#define SIZE_BUFFER 500
-
-#define SUCCESS 0
-#define ERR_INPUT_ERROR 1
-#define ERR_INVALID_INPUT 2
-#define ERR_INVALID_BUFFER 3
-
+#include "Utils.h"
 
 //Gets an int from console
 int GetInt(int* rValue);

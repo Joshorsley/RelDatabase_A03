@@ -1,5 +1,5 @@
 #include <mysql.h>
-#include "Utils.c"
+#include "Utils.h"
 
 
 void addNewRental(MYSQL* databaseObject);

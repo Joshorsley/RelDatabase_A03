@@ -53,7 +53,7 @@ int main()
 	}
 
 	char query[256];
-	printf(query,
+	sprintf(query,
 		"SELECT COUNT(*) AS available_count FROM inventory i LEFT JOIN rental r ON i.inventory_id = r.inventory_id AND r.return_date IS NULL WHERE i.inventory_id = %d AND r.rental_id IS NULL",
 		inventory_id);
 

@@ -35,6 +35,14 @@ int main()
 	return EXIT_SUCCESS;
 }
 
+// Function: addNewRental
+// Description: This function prompts the user for input of a customer_id, inventory_id, and staff_id to enter a new rental record into the sakila database.
+//				Before creating the record this function queries the inventory table to make sure the film is available for rent.
+//				If the film is available the record is inserted into the table along with the rental_date and a NULL return_date.
+//				If the film is unavailable then the user is offered the option of joining a waitlist
+// Parmeters:
+// databaseObject - a pointer to a MYSQL database object
+
 void addNewRental(MYSQL* databaseObject)
 {
 	int customer_id = 0;
@@ -103,5 +111,13 @@ void addNewRental(MYSQL* databaseObject)
 	{
 		char choice = NULL;
 		printf("Rental not available. Add customer to waitlist? (y/n)");
+		if (choice == 'y')
+		{
+			//code to add customer to waitlist
+		}
+		else
+		{
+			printf("Customer not added to the waitlist.\n");
+		}
 	}
 }

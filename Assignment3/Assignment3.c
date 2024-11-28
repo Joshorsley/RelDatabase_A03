@@ -8,6 +8,7 @@ void printSQLError(MYSQL* conn, const char* functionName);
 
 void addNewRental(MYSQL* databaseObject);
 void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char* endDate);
+void showMenu();
 
 
 
@@ -44,6 +45,11 @@ int main()
 		{
 			printf("Invalid input. Please enter a number.\n");
 			continue;
+		}
+		
+		if (choice < 1 || choice > 5);
+		{
+			printf("Invalid choice. please pick a number between 1 and 5");
 		}
 
 		switch (choice)
@@ -155,7 +161,8 @@ void addNewRental(MYSQL* databaseObject)
 	{
 		char choice = NULL;
 		printf("Rental not available. Add customer to waitlist? (y/n)");
-		if (choice == 'y' || 'Y')
+		choice = getchar();
+		if (choice == 'y' || choice == 'Y')
 		{
 			printf("Customer added to the waitlist.");
 		}
@@ -170,11 +177,11 @@ void addNewRental(MYSQL* databaseObject)
 void showMenu()
 {
 	printf("\n ----- MENU -----\n");
-	printf("1. Add A New Rental");
-	printf("2. Update Customer Information");
-	printf("3. View Rental History");
-	printf("4. Delete Customer Record");
-	printf("5. EXIT");
+	printf("1. Add A New Rental\n");
+	printf("2. Update Customer Information\n");
+	printf("3. View Rental History\n");
+	printf("4. Delete Customer Record\n");
+	printf("5. EXIT\n");
 	printf("-----------------\n");
 	printf("Enter your choice: ");
 }
@@ -220,4 +227,10 @@ void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char
 		}
 		printf("\n");
 	}
+}
+
+void printSQLError(MYSQL* conn, const char* functionName)
+{
+	printf("%s failed:\nError %u: %s\n",
+		functionName, mysqul_errno(conn), mysql_error(conn));
 }

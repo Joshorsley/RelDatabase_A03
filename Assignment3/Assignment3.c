@@ -1,5 +1,7 @@
 #include <mysql.h>
 #include "Utils.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 
 
@@ -46,11 +48,6 @@ int main()
 			printf("Invalid input. Please enter a number.\n");
 			continue;
 		}
-		
-		if (choice < 1 || choice > 5);
-		{
-			printf("Invalid choice. please pick a number between 1 and 5");
-		}
 
 		switch (choice)
 		{
@@ -67,15 +64,13 @@ int main()
 				// Delete customer goes here
 				break;
 			case 5: 
-				exit(0);
+				mysql_close(databaseObject);
+				exit(EXIT_SUCCESS);
 			default:
 				printf("Invalid choice. Please try again.\n");
 
 		}
 	}
-	
-
-	
 
 	mysql_close(databaseObject);
 	return EXIT_SUCCESS;
@@ -92,6 +87,8 @@ int main()
 
 void addNewRental(MYSQL* databaseObject)
 {
+	printf("You have chosen add new rental. please follow the instructions below:\n\n");
+
 	int customer_id = 0;
 	int inventory_id = 0;
 	int staff_id = 0;
@@ -232,5 +229,5 @@ void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char
 void printSQLError(MYSQL* conn, const char* functionName)
 {
 	printf("%s failed:\nError %u: %s\n",
-		functionName, mysqul_errno(conn), mysql_error(conn));
+		functionName, mysql_errno(conn), mysql_error(conn));
 }

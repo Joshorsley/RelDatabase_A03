@@ -2,7 +2,14 @@
 #include "Utils.h"
 
 
+
+void printSQLError(MYSQL* conn, const char* functionName);
+
+
 void addNewRental(MYSQL* databaseObject);
+void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char* endDate);
+
+
 
 
 int main()
@@ -28,11 +35,20 @@ int main()
 		return EXIT_FAILURE;
 	}
 
+	viewRentalHistory(databaseObject, 1, "2005-05-25 00:00:00", "2010-01-01 00:00:00");
+
 	addNewRental(databaseObject);
 
 	mysql_close(databaseObject);
 	return EXIT_SUCCESS;
 }
+
+void printSQLError(MYSQL* conn, const char* functionName) {
+	printf("%s failed:\nError %u: %s\n",
+		functionName, mysql_errno(conn), mysql_error(conn));
+	mysql_close(conn);
+}
+
 
 void addNewRental(MYSQL* databaseObject)
 {
@@ -102,5 +118,48 @@ void addNewRental(MYSQL* databaseObject)
 	{
 		char choice = NULL;
 		printf("Rental not available. Add customer to waitlist? (y/n)");
+	}
+}
+
+//Looks ugly as heck cuz of the big long date strings
+//Should probably try to format better..
+void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char* endDate) {
+
+	char query[256];
+	sprintf(query,
+		"SELECT * FROM rental WHERE customer_id = %d AND rental_date >= %s 00:00:00' AND return_date <= '%s 00:00:00';",
+		cust_id, startDate, endDate);
+
+	//Send query
+	if (mysql_query(databaseObject, query) != 0)
+	{
+		printSQLError(databaseObject, "mysql_query");
+		return;
+	}
+	//Grab the results
+	MYSQL_RES* result = mysql_store_result(databaseObject);
+	if (result == NULL)
+	{
+		printSQLError(databaseObject, "mysql_store_result");
+		return;
+	}
+
+	//Get column count for the result
+	int num_fields = mysql_num_fields(result);
+	MYSQL_ROW row;
+
+	//Print column names
+	MYSQL_FIELD* fields = mysql_fetch_fields(result);
+	for (int i = 0; i < num_fields; i++) {
+		printf("%s\t", fields[i].name);
+	}
+	printf("\n");
+
+	//Print each row
+	while ((row = mysql_fetch_row(result)) != NULL) {
+		for (int i = 0; i < num_fields; i++) {
+			printf("%s\t", row[i] ? row[i] : "NULL");
+		}
+		printf("\n");
 	}
 }

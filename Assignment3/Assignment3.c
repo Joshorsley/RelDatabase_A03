@@ -35,9 +35,41 @@ int main()
 		return EXIT_FAILURE;
 	}
 
-	viewRentalHistory(databaseObject, 1, "2005-05-25 00:00:00", "2010-01-01 00:00:00");
+	while (1)
+	{
+		int choice = 0;
 
-	addNewRental(databaseObject);
+		showMenu();
+		if (GetInt(&choice) != SUCCESS)
+		{
+			printf("Invalid input. Please enter a number.\n");
+			continue;
+		}
+
+		switch (choice)
+		{
+			case 1:
+				addNewRental(databaseObject);
+				break;
+			case 2:
+				// Update customer info goes here
+				break;
+			case 3:
+				viewRentalHistory(databaseObject, 1, "2005-05-25 00:00:00", "2010-01-01 00:00:00");
+				break;
+			case 4:
+				// Delete customer goes here
+				break;
+			case 5: 
+				exit(0);
+			default:
+				printf("Invalid choice. Please try again.\n");
+
+		}
+	}
+	
+
+	
 
 	mysql_close(databaseObject);
 	return EXIT_SUCCESS;
@@ -132,6 +164,19 @@ void addNewRental(MYSQL* databaseObject)
 			printf("Customer not added to the waitlist.\n");
 		}
 	}
+}
+
+
+void showMenu()
+{
+	printf("\n ----- MENU -----\n");
+	printf("1. Add A New Rental");
+	printf("2. Update Customer Information");
+	printf("3. View Rental History");
+	printf("4. Delete Customer Record");
+	printf("5. EXIT");
+	printf("-----------------\n");
+	printf("Enter your choice: ");
 }
 
 //Looks ugly as heck cuz of the big long date strings

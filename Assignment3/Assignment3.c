@@ -39,7 +39,7 @@ int main()
 //				Before creating the record this function queries the inventory table to make sure the film is available for rent.
 //				If the film is available the record is inserted into the table along with the rental_date and a NULL return_date.
 //				If the film is unavailable then the user is offered the option of joining a waitlist
-// Parmeters:
+// Parameters:
 // databaseObject - a pointer to a MYSQL database object
 
 void addNewRental(MYSQL* databaseObject)
@@ -49,19 +49,19 @@ void addNewRental(MYSQL* databaseObject)
 	int staff_id = 0;
 
 	printf("Enter Customer ID: ");
-	if (scanf("%d", &customer_id) != 1)
+	if (GetInt(&customer_id) != SUCCESS)
 	{
 		printf("Invalid input for Customer ID.  Please enter a valid number.\n");
 		return;
 	}
 	printf("Enter Inventory ID: ");
-	if (scanf("%d", &inventory_id) != 1)
+	if (GetInt(&inventory_id) != SUCCESS)
 	{
 		printf("Invalid input for Inventory ID.  Please enter a valid number.\n");
 		return;
 	}
 	printf("Enter Staff ID: ");
-	if (scanf("%d", &staff_id) != 1)
+	if (GetInt(&staff_id) != SUCCESS)
 	{
 		printf("Invalid input for Staff ID.  Please enter a valid number.\n");
 		return;

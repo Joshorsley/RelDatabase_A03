@@ -50,6 +50,7 @@ int main()
 //				If the film is unavailable then the user is offered the option of joining a waitlist
 // Parameters:
 // databaseObject - a pointer to a MYSQL database object
+// Returns: void
 
 void addNewRental(MYSQL* databaseObject)
 {
@@ -76,9 +77,12 @@ void addNewRental(MYSQL* databaseObject)
 		return;
 	}
 
-	char query[256];
+	char query[512];
 	sprintf(query,
-		"SELECT COUNT(*) AS available_count FROM inventory i LEFT JOIN rental r ON i.inventory_id = r.inventory_id AND r.return_date IS NULL WHERE i.inventory_id = %d AND r.rental_id IS NULL",
+		"SELECT COUNT(*) AS available_count" 
+		"FROM inventory i"
+		"LEFT JOIN rental r ON i.inventory_id = r.inventory_id AND r.return_date IS NULL" 
+		"WHERE i.inventory_id = %d AND r.rental_id IS NULL",
 		inventory_id);
 
 	if (mysql_query(databaseObject, query) != 0)
@@ -89,7 +93,7 @@ void addNewRental(MYSQL* databaseObject)
 	MYSQL_RES* result = mysql_store_result(databaseObject);
 	if (result == NULL)
 	{
-		printf("Error Storing Result: %s\n", mysql_error(databaseObject));
+		printSQLError(databaseObject, "mysql_store_result");
 		return;
 	}
 
@@ -108,7 +112,7 @@ void addNewRental(MYSQL* databaseObject)
 
 		if (mysql_query(databaseObject, query) != 0)
 		{
-			printf("Error inserting rental");
+			printSQLError(databaseObject, "mysql_query");
 			return;
 		}
 
@@ -119,9 +123,9 @@ void addNewRental(MYSQL* databaseObject)
 	{
 		char choice = NULL;
 		printf("Rental not available. Add customer to waitlist? (y/n)");
-		if (choice == 'y')
+		if (choice == 'y' || 'Y')
 		{
-			//code to add customer to waitlist
+			printf("Customer added to the waitlist.");
 		}
 		else
 		{

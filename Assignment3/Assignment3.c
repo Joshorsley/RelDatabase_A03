@@ -77,14 +77,13 @@ int main()
 	return EXIT_SUCCESS;
 }
 
-// Function: addNewRental
+// Function:	addNewRental
 // Description: This function prompts the user for input of a customer_id, inventory_id, and staff_id to enter a new rental record into the sakila database.
 //				Before creating the record this function queries the inventory table to make sure the film is available for rent.
 //				If the film is available the record is inserted into the table along with the rental_date and a NULL return_date.
 //				If the film is unavailable then the user is offered the option of joining a waitlist
-// Parameters:
-// databaseObject - a pointer to a MYSQL database object
-// Returns: void
+// Parameters:	databaseObject - a pointer to a MYSQL database object
+// Returns:		void
 
 void addNewRental(MYSQL* databaseObject)
 {
@@ -228,14 +227,13 @@ void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char
 }
 
 
-// Function: deleteCustomerRecord
+// Function:	deleteCustomerRecord
 // Description: This function is used to delete a customer record from the sakila database.  
 //				The user is prompted for a customer ID and the function will check if the customer has any 
 //				active rentals. If the customer has active rentals the function will not delete the record.
 // 				If the customer has no active rentals the function will prompt the user to confirm the deletion. 
-// Parameters:
-// databaseObject - a pointer to a MYSQL database object
-// Returns: void
+// Parameters:	databaseObject - a pointer to a MYSQL database object
+// Returns:		void
 void deleteCustomerRecord(MYSQL* databaseObject)
 {
 	//Prompt user for customer ID

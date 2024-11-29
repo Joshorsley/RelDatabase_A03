@@ -10,6 +10,7 @@ void printSQLError(MYSQL* conn, const char* functionName);
 
 void addNewRental(MYSQL* databaseObject);
 void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char* endDate);
+void deleteCustomerRecord(MYSQL* databaseObject);
 void showMenu();
 
 
@@ -19,7 +20,7 @@ int main()
 {
 	const char* server = "localhost";
 	const char* username = "root";
-	const char* password = "root";
+	const char* password = "EjalooTR@1262";
 	const char* defaultDatabase = "sakila";
 
 	// step 1. Initialize the MySQL Object
@@ -61,7 +62,7 @@ int main()
 				viewRentalHistory(databaseObject, 1, "2005-05-25 00:00:00", "2010-01-01 00:00:00");
 				break;
 			case 4:
-				// Delete customer goes here
+				deleteCustomerRecord(databaseObject);
 				break;
 			case 5: 
 				mysql_close(databaseObject);
@@ -114,10 +115,10 @@ void addNewRental(MYSQL* databaseObject)
 
 	char query[512];
 	sprintf(query,
-		"SELECT COUNT(*) AS available_count" 
-		"FROM inventory i"
-		"LEFT JOIN rental r ON i.inventory_id = r.inventory_id AND r.return_date IS NULL" 
-		"WHERE i.inventory_id = %d AND r.rental_id IS NULL",
+		"SELECT COUNT(*) AS available_count "
+		"FROM inventory i "
+		"LEFT JOIN rental r ON i.inventory_id = r.inventory_id AND r.return_date IS NULL "
+		"WHERE i.inventory_id = %d AND r.rental_id IS NULL;",
 		inventory_id);
 
 	if (mysql_query(databaseObject, query) != 0)
@@ -189,7 +190,7 @@ void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char
 
 	char query[256];
 	sprintf(query,
-		"SELECT * FROM rental WHERE customer_id = %d AND rental_date >= %s 00:00:00' AND return_date <= '%s 00:00:00';",
+		"SELECT * FROM rental WHERE customer_id = %d AND rental_date >= '%s' AND return_date <= '%s';",
 		cust_id, startDate, endDate);
 
 	//Send query
@@ -224,6 +225,58 @@ void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char
 		}
 		printf("\n");
 	}
+}
+
+void deleteCustomerRecord(MYSQL* databaseObject)
+{
+	//Prompt user for customer ID
+	printf("You have chosen to delete a customer record. Please enter the customer ID: ");
+	int customer_id = 0;
+	if (GetInt(&customer_id) != SUCCESS)
+	{
+		printf("Invalid input for Customer ID.  Please enter a valid number.\n");
+		return;
+	}
+
+	//Check if customer has any rentals, if so, do not delete
+	char query[256];
+	sprintf(query,
+		"SELECT COUNT(*) AS rental_count FROM rental WHERE customer_id = %d AND return_date IS NULL;",
+		customer_id);
+
+	if (mysql_query(databaseObject, query) != 0)
+	{
+		printSQLError(databaseObject, "mysql_query");
+		return;
+	}
+
+	MYSQL_RES* result = mysql_store_result(databaseObject);
+	if (result == NULL)
+	{
+		printSQLError(databaseObject, "mysql_store_result");
+		return;
+	}
+
+	MYSQL_ROW row = mysql_fetch_row(result);
+	int rental_count = atoi(row[0]);
+	mysql_free_result(result);
+
+	if (rental_count > 0)
+	{
+		printf("Unable to delete customer, there are still active rentals. \n");
+		return;
+	}
+
+	// Perform deletion
+	sprintf(query, "DELETE FROM customer WHERE customer_id = %d;", customer_id);
+	if (mysql_query(databaseObject, query) != 0)
+	{
+		printSQLError(databaseObject, "mysql_query");
+		return;
+	}
+
+	printf("Customer record deleted successfully.\n");
+
 }
 
 void printSQLError(MYSQL* conn, const char* functionName)

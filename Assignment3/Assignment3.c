@@ -20,7 +20,7 @@ int main()
 {
 	const char* server = "localhost";
 	const char* username = "root";
-	const char* password = "EjalooTR@1262";
+	const char* password = "root";
 	const char* defaultDatabase = "sakila";
 
 	// step 1. Initialize the MySQL Object
@@ -244,12 +244,14 @@ void deleteCustomerRecord(MYSQL* databaseObject)
 		"SELECT COUNT(*) AS rental_count FROM rental WHERE customer_id = %d AND return_date IS NULL;",
 		customer_id);
 
+	//Send query
 	if (mysql_query(databaseObject, query) != 0)
 	{
 		printSQLError(databaseObject, "mysql_query");
 		return;
 	}
 
+	//Grab the results
 	MYSQL_RES* result = mysql_store_result(databaseObject);
 	if (result == NULL)
 	{
@@ -257,13 +259,15 @@ void deleteCustomerRecord(MYSQL* databaseObject)
 		return;
 	}
 
+	//Get the rental count
 	MYSQL_ROW row = mysql_fetch_row(result);
 	int rental_count = atoi(row[0]);
 	mysql_free_result(result);
 
+	//If there are active rentals, do not delete
 	if (rental_count > 0)
 	{
-		printf("Unable to delete customer, there are still active rentals. \n");
+		printf("Unable to delete customer, there are still %d active rentals. \n", rental_count);
 		return;
 	}
 

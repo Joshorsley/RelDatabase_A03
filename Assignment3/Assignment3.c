@@ -227,6 +227,15 @@ void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char
 	}
 }
 
+
+// Function: deleteCustomerRecord
+// Description: This function is used to delete a customer record from the sakila database.  
+//				The user is prompted for a customer ID and the function will check if the customer has any 
+//				active rentals. If the customer has active rentals the function will not delete the record.
+// 				If the customer has no active rentals the function will prompt the user to confirm the deletion. 
+// Parameters:
+// databaseObject - a pointer to a MYSQL database object
+// Returns: void
 void deleteCustomerRecord(MYSQL* databaseObject)
 {
 	//Prompt user for customer ID

@@ -20,7 +20,7 @@ int main()
 {
 	const char* server = "localhost";
 	const char* username = "root";
-	const char* password = "root";
+	const char* password = "EjalooTR@1262";
 	const char* defaultDatabase = "sakila";
 
 	// step 1. Initialize the MySQL Object
@@ -271,7 +271,17 @@ void deleteCustomerRecord(MYSQL* databaseObject)
 		return;
 	}
 
-	// Perform deletion
+	//Prompt user to confirm deletion
+	printf("Are you sure you want to delete this customer record? (y/n): ");
+	char choice;
+	while ((choice = getchar()) == '\n'); //Delete newline character from previous input
+	if (choice != 'y' && choice != 'Y')
+	{
+		printf("Deletion cancelled.\n");
+		return;
+	}
+
+	//Deleting the customer record
 	sprintf(query, "DELETE FROM customer WHERE customer_id = %d;", customer_id);
 	if (mysql_query(databaseObject, query) != 0)
 	{

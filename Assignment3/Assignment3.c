@@ -156,9 +156,11 @@ void addNewRental(MYSQL* databaseObject)
 	}
 	else
 	{
-		char choice = NULL;
+		char choice;
 		printf("Rental not available. Add customer to waitlist? (y/n)");
-		choice = getchar();
+		(void)getchar();
+		(void)scanf(" %c", &choice);
+
 		if (choice == 'y' || choice == 'Y')
 		{
 			printf("Customer added to the waitlist.");
@@ -281,7 +283,8 @@ void deleteCustomerRecord(MYSQL* databaseObject)
 	//Prompt user to confirm deletion
 	printf("Are you sure you want to delete this customer record? (y/n): ");
 	char choice;
-	while ((choice = getchar()) == '\n'); //Delete newline character from previous input
+	(void)getchar();
+	(void)scanf(" %c", &choice);//Delete newline character from previous input
 	if (choice != 'y' && choice != 'Y')
 	{
 		printf("Deletion cancelled.\n");

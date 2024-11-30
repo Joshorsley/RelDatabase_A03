@@ -20,7 +20,7 @@ int main()
 {
 	const char* server = "localhost";
 	const char* username = "root";
-	const char* password = "EjalooTR@1262";
+	const char* password = "root";
 	const char* defaultDatabase = "sakila";
 
 	// step 1. Initialize the MySQL Object

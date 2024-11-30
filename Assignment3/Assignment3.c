@@ -10,6 +10,7 @@ void printSQLError(MYSQL* conn, const char* functionName);
 
 void addNewRental(MYSQL* databaseObject);
 void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char* endDate);
+void deleteCustomerRecord(MYSQL* databaseObject);
 void showMenu();
 
 
@@ -61,7 +62,7 @@ int main()
 				viewRentalHistory(databaseObject, 1, "2005-05-25 00:00:00", "2010-01-01 00:00:00");
 				break;
 			case 4:
-				// Delete customer goes here
+				deleteCustomerRecord(databaseObject);
 				break;
 			case 5: 
 				mysql_close(databaseObject);
@@ -76,14 +77,13 @@ int main()
 	return EXIT_SUCCESS;
 }
 
-// Function: addNewRental
+// Function:	addNewRental
 // Description: This function prompts the user for input of a customer_id, inventory_id, and staff_id to enter a new rental record into the sakila database.
 //				Before creating the record this function queries the inventory table to make sure the film is available for rent.
 //				If the film is available the record is inserted into the table along with the rental_date and a NULL return_date.
 //				If the film is unavailable then the user is offered the option of joining a waitlist
-// Parameters:
-// databaseObject - a pointer to a MYSQL database object
-// Returns: void
+// Parameters:	databaseObject - a pointer to a MYSQL database object
+// Returns:		void
 
 void addNewRental(MYSQL* databaseObject)
 {
@@ -114,10 +114,10 @@ void addNewRental(MYSQL* databaseObject)
 
 	char query[512];
 	sprintf(query,
-		"SELECT COUNT(*) AS available_count" 
-		"FROM inventory i"
-		"LEFT JOIN rental r ON i.inventory_id = r.inventory_id AND r.return_date IS NULL" 
-		"WHERE i.inventory_id = %d AND r.rental_id IS NULL",
+		"SELECT COUNT(*) AS available_count "
+		"FROM inventory i "
+		"LEFT JOIN rental r ON i.inventory_id = r.inventory_id AND r.return_date IS NULL "
+		"WHERE i.inventory_id = %d AND r.rental_id IS NULL;",
 		inventory_id);
 
 	if (mysql_query(databaseObject, query) != 0)
@@ -189,7 +189,7 @@ void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char
 
 	char query[256];
 	sprintf(query,
-		"SELECT * FROM rental WHERE customer_id = %d AND rental_date >= %s 00:00:00' AND return_date <= '%s 00:00:00';",
+		"SELECT * FROM rental WHERE customer_id = %d AND rental_date >= '%s' AND return_date <= '%s';",
 		cust_id, startDate, endDate);
 
 	//Send query
@@ -224,6 +224,80 @@ void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char
 		}
 		printf("\n");
 	}
+}
+
+
+// Function:	deleteCustomerRecord
+// Description: This function is used to delete a customer record from the sakila database.  
+//				The user is prompted for a customer ID and the function will check if the customer has any 
+//				active rentals. If the customer has active rentals the function will not delete the record.
+// 				If the customer has no active rentals the function will prompt the user to confirm the deletion. 
+// Parameters:	databaseObject - a pointer to a MYSQL database object
+// Returns:		void
+void deleteCustomerRecord(MYSQL* databaseObject)
+{
+	//Prompt user for customer ID
+	printf("You have chosen to delete a customer record. Please enter the customer ID: ");
+	int customer_id = 0;
+	if (GetInt(&customer_id) != SUCCESS)
+	{
+		printf("Invalid input for Customer ID.  Please enter a valid number.\n");
+		return;
+	}
+
+	//Check if customer has any rentals, if so, do not delete
+	char query[256];
+	sprintf(query,
+		"SELECT COUNT(*) AS rental_count FROM rental WHERE customer_id = %d AND return_date IS NULL;",
+		customer_id);
+
+	//Send query
+	if (mysql_query(databaseObject, query) != 0)
+	{
+		printSQLError(databaseObject, "mysql_query");
+		return;
+	}
+
+	//Grab the results
+	MYSQL_RES* result = mysql_store_result(databaseObject);
+	if (result == NULL)
+	{
+		printSQLError(databaseObject, "mysql_store_result");
+		return;
+	}
+
+	//Get the rental count
+	MYSQL_ROW row = mysql_fetch_row(result);
+	int rental_count = atoi(row[0]);
+	mysql_free_result(result);
+
+	//If there are active rentals, do not delete
+	if (rental_count > 0)
+	{
+		printf("Unable to delete customer, there are still %d active rentals. \n", rental_count);
+		return;
+	}
+
+	//Prompt user to confirm deletion
+	printf("Are you sure you want to delete this customer record? (y/n): ");
+	char choice;
+	while ((choice = getchar()) == '\n'); //Delete newline character from previous input
+	if (choice != 'y' && choice != 'Y')
+	{
+		printf("Deletion cancelled.\n");
+		return;
+	}
+
+	//Deleting the customer record
+	sprintf(query, "DELETE FROM customer WHERE customer_id = %d;", customer_id);
+	if (mysql_query(databaseObject, query) != 0)
+	{
+		printSQLError(databaseObject, "mysql_query");
+		return;
+	}
+
+	printf("Customer record deleted successfully.\n");
+
 }
 
 void printSQLError(MYSQL* conn, const char* functionName)

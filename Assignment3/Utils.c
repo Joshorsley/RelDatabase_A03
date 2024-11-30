@@ -11,6 +11,9 @@ int GetString(char* rValue, size_t bufferSize);
 //This one's sloppy, feel free to fix.
 int GetDate(char* rValue, size_t bufferSize);
 
+//Checks if the string passed is in correct email format
+int ValidateEmail(char* rValue);
+
 int GetInt(int* rvalue) {
     char buffer[SIZE_BUFFER];
     
@@ -80,4 +83,45 @@ int GetDate(char* rValue, size_t bufferSize) {
 
     strcpy(rValue, buffer);
     return SUCCESS; // Success
+}
+
+int ValidateEmail(char* rValue)
+{
+    int atCounter = 0;
+    int periodCounter = 0;
+    int atPosition = 0;
+    int periodPosition = 0;
+    int charsBetween = 0;
+
+    for (int i = 0; i < strlen(rValue); i++)
+    {
+        if (rValue[i] == '@')
+        {
+            atCounter++;
+            atPosition = i;
+        }
+        if (rValue[i] == '.')
+        {
+            periodCounter++;
+            periodPosition = i;
+        }
+    }
+
+    charsBetween = periodPosition - atPosition;  //The number of characters between the @ and the .
+
+    /*There must be 1 @ , at least 1 . , at least 1 character before the @, the . must come after the @ ,
+    there must be more than 1 character between the @ and . */
+    if (atCounter != 1 || periodCounter == 0 || atPosition < 1 || atPosition > periodPosition || charsBetween == 1)
+    {
+        return ERR_INVALID_INPUT;
+    }
+
+    charsBetween = strlen(rValue) - periodPosition; //The number of characters between the end of the email and the final .
+
+    if (charsBetween == 1) //There must be at least 1 character between the final . and the end of the email
+    {
+        return ERR_INVALID_INPUT;
+    }
+
+    return SUCCESS;
 }

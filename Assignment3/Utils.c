@@ -19,7 +19,7 @@ int GetInt(int* rvalue) {
     
     //Get line
     if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
-        return ERR_INPUT_ERROR;//No input
+        return ERR_NO_INPUT;//No input
     }
 
     //Points to first char after int parsed
@@ -46,40 +46,42 @@ int GetString(char* rValue, size_t bufferSize) {
 
     //Get line
     if (fgets(buffer, bufferSize, stdin) == NULL) {
-        return ERR_INPUT_ERROR;//No input
+        return ERR_NO_INPUT;//No input
     }
 
     // Remove trailing newline
     size_t len = strlen(buffer);
 
     if (buffer[len - 1] != '\n') {
-        return ERR_INPUT_ERROR;//Newline not where it's supposed to be
+        return ERR_NO_INPUT;//Newline not where it's supposed to be
         //User probably exceeded buffer size.
     }
 
     buffer[len - 1] = '\0';
+    FlushBuffer();
+
 
     strcpy(rValue, buffer);
     return SUCCESS; // Success
 }
 
 int GetDate(char* rValue, size_t bufferSize) {
-    char* buffer[SIZE_BUFFER];
+    char buffer[SIZE_BUFFER];
     
     if (bufferSize != SIZE_DATE_STRING) {
         return ERR_INVALID_BUFFER;//Wrong buffer size.
     }
-    printf("Enter a date <YYYY-MM-DD> WITH '-' chars: ");
-    if (fgets(buffer, SIZE_DATE_STRING, stdin) == NULL) {
-        return ERR_INPUT_ERROR;//Input error
+    if (fgets(buffer, bufferSize, stdin) == NULL) {
+        return ERR_NO_INPUT;//Input error
     }
 
-    if (buffer[SIZE_DATE_STRING - 1] != '\n') {
+    if (buffer[SIZE_DATE_STRING - 1] != '\0') {
         return ERR_INVALID_INPUT;//Bad format.
     }
     if (buffer[4] != '-' || buffer[7] != '-') {
         return ERR_INVALID_INPUT;
     }
+    FlushBuffer();
 
     strcpy(rValue, buffer);
     return SUCCESS; // Success
@@ -124,4 +126,12 @@ int ValidateEmail(char* rValue)
     }
 
     return SUCCESS;
+}
+
+
+void FlushBuffer() {
+    int c;
+    //Consume chars until \n or EOF
+    while ((c = getchar()) != '\n' && c != EOF) {
+    }
 }

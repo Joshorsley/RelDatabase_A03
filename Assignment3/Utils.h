@@ -10,7 +10,7 @@
 #define SIZE_BUFFER 500
 
 #define SUCCESS 0
-#define ERR_INPUT_ERROR 1
+#define ERR_NO_INPUT 1
 #define ERR_INVALID_INPUT 2
 #define ERR_INVALID_BUFFER 3
 
@@ -18,3 +18,4 @@ int GetInt(int* rValue);
 int GetString(char* rValue, size_t bufferSize);
 int GetDate(char* rValue, size_t bufferSize);
 int ValidateEmail(char* rValue);
+void FlushBuffer();

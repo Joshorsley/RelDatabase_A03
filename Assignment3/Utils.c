@@ -58,8 +58,6 @@ int GetString(char* rValue, size_t bufferSize) {
     }
 
     buffer[len - 1] = '\0';
-    FlushBuffer();
-
 
     strcpy(rValue, buffer);
     return SUCCESS; // Success
@@ -81,7 +79,6 @@ int GetDate(char* rValue, size_t bufferSize) {
     if (buffer[4] != '-' || buffer[7] != '-') {
         return ERR_INVALID_INPUT;
     }
-    FlushBuffer();
 
     strcpy(rValue, buffer);
     return SUCCESS; // Success
@@ -126,12 +123,4 @@ int ValidateEmail(char* rValue)
     }
 
     return SUCCESS;
-}
-
-
-void FlushBuffer() {
-    int c;
-    //Consume chars until \n or EOF
-    while ((c = getchar()) != '\n' && c != EOF) {
-    }
 }

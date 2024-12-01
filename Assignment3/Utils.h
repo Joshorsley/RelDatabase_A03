@@ -18,4 +18,3 @@ int GetInt(int* rValue);
 int GetString(char* rValue, size_t bufferSize);
 int GetDate(char* rValue, size_t bufferSize);
 int ValidateEmail(char* rValue);
-void FlushBuffer();

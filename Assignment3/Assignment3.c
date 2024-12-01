@@ -70,7 +70,6 @@ int main()
 				printf("Invalid choice. Please try again.\n");
 		}
 	}
-
 	mysql_close(databaseObject);
 	return EXIT_SUCCESS;
 }
@@ -204,7 +203,7 @@ void viewRentalHistory(MYSQL* databaseObject) {
 	int parseResult = 0;
 
 	//Get customer ID
-	printf("Please provide a customer ID:\n");
+	printf("\nPlease provide a customer ID:\n");
 	//If error, output corresponding message.
 	if ((parseResult = GetInt(&cust_id)) != SUCCESS) {
 		printf("\a\n");

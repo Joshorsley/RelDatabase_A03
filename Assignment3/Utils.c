@@ -73,13 +73,17 @@ int GetDate(char* rValue, size_t bufferSize) {
         return ERR_NO_INPUT;//Input error
     }
 
-    if (buffer[SIZE_DATE_STRING - 1] != '\0') {
+    if (buffer[SIZE_DATE_STRING - 2] != '\n') {
         return ERR_INVALID_INPUT;//Bad format.
+    }
+    if (buffer[SIZE_DATE_STRING - 1] != '\0') {
+        return ERR_INVALID_INPUT;
     }
     if (buffer[4] != '-' || buffer[7] != '-') {
         return ERR_INVALID_INPUT;
     }
 
+    buffer[SIZE_DATE_STRING - 2] = '\0';
     strcpy(rValue, buffer);
     return SUCCESS; // Success
 }

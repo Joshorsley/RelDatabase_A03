@@ -6,7 +6,7 @@
 #pragma warning(disable: 4996)
 
 
-#define SIZE_DATE_STRING 11
+#define SIZE_DATE_STRING 12
 #define SIZE_BUFFER 500
 
 #define SUCCESS 0

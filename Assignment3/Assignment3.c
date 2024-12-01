@@ -157,19 +157,31 @@ void addNewRental(MYSQL* databaseObject)
 	}
 	else
 	{
-		char choice;
-		printf("Rental not available. Add customer to waitlist? (y/n)");
-		(void)getchar();
-		(void)scanf(" %c", &choice);
+		char choice[256]; // Buffer for input
+		printf("Rental not available. Add customer to waitlist? (y/n): ");
 
-		if (choice == 'y' || choice == 'Y')
+		
+		if (fgets(choice, sizeof(choice), stdin) != NULL)
 		{
-			printf("Customer added to the waitlist.");
+			//
+			if (choice[0] == 'y' || choice[0] == 'Y')
+			{
+				printf("Customer added to the waitlist.\n");
+			}
+			else if (choice[0] == 'n' || choice[0] == 'N')
+			{
+				printf("Customer not added to the waitlist.\n");
+			}
+			else
+			{
+				printf("Invalid input. Please enter 'y' or 'n'.\n");
+			}
 		}
 		else
 		{
-			printf("Customer not added to the waitlist.\n");
+			printf("Input error. Please try again.\n");
 		}
+
 	}
 }
 

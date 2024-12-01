@@ -96,12 +96,64 @@ void addNewRental(MYSQL* databaseObject)
 		printf("Invalid input for Customer ID.  Please enter a valid number.\n");
 		return;
 	}
+	char query[256];
+	sprintf(query, "SELECT COUNT(*) FROM customer WHERE customer_id = %d;", customer_id);
+
+	if (mysql_query(databaseObject, query) != 0)
+	{
+		printSQLError(databaseObject, "mysql_query");
+		return;
+	}
+
+	MYSQL_RES* result = mysql_store_result(databaseObject);
+	if (result == NULL)
+	{
+		printSQLError(databaseObject, "mysql_store_result");
+		return;
+	}
+
+	MYSQL_ROW row = mysql_fetch_row(result);
+	int customerExists = atoi(row[0]);
+	mysql_free_result(result);
+
+	if (customerExists == 0)
+	{
+		printf("Customer ID %d does not exist. Please enter a valid Customer ID.\n", customer_id);
+		return;
+	}
+
+
 	printf("Enter Inventory ID: ");
 	if (GetInt(&inventory_id) != SUCCESS)
 	{
 		printf("Invalid input for Inventory ID.  Please enter a valid number.\n");
 		return;
 	}
+
+	sprintf(query, "SELECT COUNT(*) FROM inventory WHERE inventory_id = %d;", inventory_id);
+	if (mysql_query(databaseObject, query) != 0)
+	{
+		printSQLError(databaseObject, "mysql_query");
+		return;
+	}
+
+	result = mysql_store_result(databaseObject);
+	if (result == NULL)
+	{
+		printSQLError(databaseObject, "mysql_store_result");
+		return;
+	}
+
+	row = mysql_fetch_row(result);
+	int inventoryExists = atoi(row[0]);
+	mysql_free_result(result);
+
+	if (inventoryExists == 0)
+	{
+		printf("Inventory ID does not exist. Please enter a valid Inventory ID.\n");
+		return;
+	}
+
 	printf("Enter Staff ID: ");
 	if (GetInt(&staff_id) != SUCCESS)
 	{
@@ -109,7 +161,31 @@ void addNewRental(MYSQL* databaseObject)
 		return;
 	}
 
-	char query[512];
+	sprintf(query, "SELECT COUNT(*) FROM staff WHERE staff_id = %d;", staff_id);
+	if (mysql_query(databaseObject, query) != 0)
+	{
+		printSQLError(databaseObject, "mysql_query");
+		return;
+	}
+
+	result = mysql_store_result(databaseObject);
+	if (result == NULL)
+	{
+		printSQLError(databaseObject, "mysql_store_result");
+		return;
+	}
+
+	row = mysql_fetch_row(result);
+	int staffExists = atoi(row[0]);
+	mysql_free_result(result);
+
+	if (staffExists == 0)
+	{
+		printf("Staff ID %d does not exist. Please enter a valid Staff ID.\n", staff_id);
+		return;
+	}
+
+	
 	sprintf(query,
 		"SELECT COUNT(*) AS available_count "
 		"FROM inventory i "
@@ -122,14 +198,16 @@ void addNewRental(MYSQL* databaseObject)
 		printf("Error Executing the Query\n");
 		return;
 	}
-	MYSQL_RES* result = mysql_store_result(databaseObject);
+	
+	result = mysql_store_result(databaseObject);
 	if (result == NULL)
 	{
 		printSQLError(databaseObject, "mysql_store_result");
 		return;
 	}
 
-	MYSQL_ROW row = mysql_fetch_row(result);
+	row = mysql_fetch_row(result);
+	
 	int available_count = atoi(row[0]);
 
 	printf("%d are available for rent\n", available_count);

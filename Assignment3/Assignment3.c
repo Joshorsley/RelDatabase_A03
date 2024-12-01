@@ -130,8 +130,7 @@ void addNewRental(MYSQL* databaseObject)
 	}
 }
 
-//Looks ugly as heck cuz of the big long date strings
-//Should probably try to format better..
+
 void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char* endDate) {
 
 	char query[256];

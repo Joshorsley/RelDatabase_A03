@@ -428,6 +428,22 @@ void deleteCustomerRecord(MYSQL* databaseObject)
 		return;
 	}
 
+
+	// Delete dependent records from related tables
+	sprintf(query, "DELETE FROM payment WHERE customer_id = %d;", customer_id);
+	if (mysql_query(databaseObject, query) != 0)
+	{
+		printSQLError(databaseObject, "mysql_query");
+		return;
+	}
+
+	sprintf(query, "DELETE FROM rental WHERE customer_id = %d;", customer_id);
+	if (mysql_query(databaseObject, query) != 0)
+	{
+		printSQLError(databaseObject, "mysql_query");
+		return;
+	}
+
 	//Deleting the customer record
 	sprintf(query, "DELETE FROM customer WHERE customer_id = %d;", customer_id);
 	if (mysql_query(databaseObject, query) != 0)

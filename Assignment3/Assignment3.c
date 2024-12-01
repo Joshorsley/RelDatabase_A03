@@ -1,7 +1,5 @@
 #include <mysql.h>
 #include "Utils.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 
 
@@ -9,7 +7,7 @@ void printSQLError(MYSQL* conn, const char* functionName);
 
 
 void addNewRental(MYSQL* databaseObject);
-void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char* endDate);
+void viewRentalHistory(MYSQL* databaseObject);
 void deleteCustomerRecord(MYSQL* databaseObject);
 void showMenu();
 void updateCustomerInfo(MYSQL* databaseObject);
@@ -60,7 +58,7 @@ int main()
 				updateCustomerInfo(databaseObject);
 				break;
 			case 3:
-				viewRentalHistory(databaseObject, 1, "2005-05-25 00:00:00", "2010-01-01 00:00:00");
+				viewRentalHistory(databaseObject);
 				break;
 			case 4:
 				deleteCustomerRecord(databaseObject);
@@ -70,7 +68,6 @@ int main()
 				exit(EXIT_SUCCESS);
 			default:
 				printf("Invalid choice. Please try again.\n");
-
 		}
 	}
 
@@ -276,10 +273,54 @@ void showMenu()
 	printf("Enter your choice: ");
 }
 
-//Looks ugly as heck cuz of the big long date strings
-//Should probably try to format better..
-void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char* endDate) {
 
+void viewRentalHistory(MYSQL* databaseObject) {
+
+	int cust_id = -1;
+	char startDate[SIZE_DATE_STRING] = "";
+	char endDate[SIZE_DATE_STRING] = "";
+	int parseResult = 0;
+
+	//Get customer ID
+	printf("Please provide a customer ID:\n");
+	//If error, output corresponding message.
+	if ((parseResult = GetInt(&cust_id)) != SUCCESS) {
+		printf("\a\n");
+		printf("%s", parseResult == ERR_NO_INPUT ? "No input detected."
+			: parseResult == ERR_INVALID_INPUT ? "No valid integer detected"
+			: "Unrecognized error.");
+		printf("\nAborting viewRentalHistory()");
+		return;
+	}
+
+	//Get startDate
+	printf("\n\nPlease provide a start date to filter by (Must be \"YYYY-MM-DD\" format):\n");
+	//If error, output corresponding message.
+	if ((parseResult = GetDate(startDate, SIZE_DATE_STRING)) != SUCCESS) {
+		printf("\a\n");
+		printf("%s", parseResult == ERR_INVALID_BUFFER ? "Invalid buffer size"
+			: parseResult == ERR_NO_INPUT ? "No input detected."
+			: parseResult == ERR_INVALID_INPUT ? "Invalid date format."
+			: "Unrecognized error.");
+		printf("\nAborting viewRentalHistory()");
+		return;
+	}
+
+	//Get endDate
+	printf("\n\nPlease provide an end date to filter by (Must be \"YYYY-MM-DD\" format):\n");
+	//If error, output corresponding message.
+	if ((parseResult = GetDate(endDate, SIZE_DATE_STRING)) != SUCCESS) {
+		printf("\a\n");
+		printf("%s", parseResult == ERR_INVALID_BUFFER ? "Invalid buffer size"
+			: parseResult == ERR_NO_INPUT ? "No input detected."
+			: parseResult == ERR_INVALID_INPUT ? "Invalid date format."
+			: "Unrecognized error.");
+		printf("\nAborting viewRentalHistory()");
+		return;
+	}
+
+	//
+	//INPUT RECEIVED, BEGIN QUERY & DISPLAY
 	char query[256];
 	sprintf(query,
 		"SELECT * FROM rental WHERE customer_id = %d AND rental_date >= '%s' AND return_date <= '%s';",
@@ -298,6 +339,8 @@ void viewRentalHistory(MYSQL* databaseObject, int cust_id, char* startDate, char
 		printSQLError(databaseObject, "mysql_store_result");
 		return;
 	}
+
+	printf("\n\nRental history for CustomerID: %d, From: %s  --> %s\n\n", cust_id, startDate, endDate);
 
 	//Get column count for the result
 	int num_fields = mysql_num_fields(result);

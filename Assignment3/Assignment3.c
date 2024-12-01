@@ -499,10 +499,22 @@ void updateCustomerInfo(MYSQL* databaseObject)
 		return;
 	}
 
+	if (first_name[0] == '\0' || first_name[0] == ' ')
+	{
+		printf("Invalid input for First Name. Please enter a valid name. \n");
+		return;
+	}
+
 	printf("Enter new Last Name: ");
 	if (GetString(&last_name, sizeof(last_name)) != SUCCESS)
 	{
 		printf("Invlaid input for Last Name. Please enter a valid name. \n");
+		return;
+	}
+
+	if (last_name[0] == '\0' || last_name[0] == ' ')
+	{
+		printf("Invalid input for Last Name. Please enter a valid name. \n");
 		return;
 	}
 
